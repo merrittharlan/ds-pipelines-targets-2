@@ -7,15 +7,13 @@ options(tidyverse.quiet = TRUE)
 tar_option_set(packages = c("tidyverse", "dataRetrieval")) # Loading tidyverse because we need dplyr, ggplot2, readr, stringr, and purrr
 
 p1_targets_list <- list(
-  tar_target(
-    site_data,
-    download_nwis_data(),
-  ),
-  tar_target(
-    site_info_csv,
-    nwis_site_info(fileout = "1_fetch/out/site_info.csv", site_data),
-    format = "file"
-  )
+  tar_target(site_01427207, download_nwis_site_data(site_num = "01427207", dir_out = "1_fetch/out/sites/"), format = "file"),
+  tar_target(site_01432160, download_nwis_site_data(site_num = "01432160", dir_out = "1_fetch/out/sites/"), format = "file"),
+  tar_target(site_01436690, download_nwis_site_data(site_num = "01436690", dir_out = "1_fetch/out/sites/"), format = "file"),
+  tar_target(site_01466500, download_nwis_site_data(site_num = "01466500", dir_out = "1_fetch/out/sites/"), format = "file"),
+  tar_target(in_dir, "1_fetch/out/sites", format = "file"),
+  tar_target(site_data, combine_into_df(in_dir)),
+  tar_target(site_info_csv,nwis_site_info(fileout = "1_fetch/out/site_info.csv", site_data),format = "file")
 )
 
 p2_targets_list <- list(
@@ -24,12 +22,8 @@ p2_targets_list <- list(
     process_data(site_data)
   ),
   tar_target(
-    site_data_annotated,
-    annotate_data(site_data_clean, site_filename = site_info_csv)
-  ),
-  tar_target(
     site_data_styled,
-    style_data(site_data_annotated)
+    style_data(site_data_clean, site_filename = site_info_csv)
   )
 )
 
